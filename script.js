@@ -105,7 +105,6 @@ class App {
       workout = new Cycling([lat, lng], distance, duration, elevation);
     }
     this.#workouts.push(workout);
-    console.log(this.#workouts);
     // prettier-ignore
     inputDistance.value = inputCadence.value = inputDuration.value = inputElevation.value = 0;
 
