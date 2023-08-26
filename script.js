@@ -25,6 +25,7 @@ class Running extends Workout {
   constructor(coords, distance, duration, cadence) {
     super(coords, distance, duration);
     this.cadence = cadence;
+    this.calcPace();
   }
   calcPace() {
     this.pace = this.duration / this.distance;
@@ -44,15 +45,19 @@ class Cycling extends Workout {
   }
 }
 
-const run1 = new Running([39, -12], 5.2, 24, 178);
-const cycling1 = new Cycling([39, -12], 5.2, 24, 178);
-
 class App {
   #map;
   #mapEvent;
+  #workouts = [];
   constructor() {
     this._getPosition();
-    form.addEventListener("submit", this._newWorkout.bind(this));
+    const inputs = [inputCadence, inputDistance, inputDuration, inputElevation];
+    for (const input of inputs) {
+      input.addEventListener("keypress", (e) => {
+        if (e.keyCode != 13) return;
+        this._newWorkout().bind(this);
+      });
+    }
     inputType.addEventListener("change", this._toggleElevationField);
   }
 
@@ -85,14 +90,25 @@ class App {
     inputCadence.closest(".form__row").classList.toggle("form__row--hidden");
   }
 
-  _newWorkout(event) {
-    event.preventDefault();
-    inputDistance.value =
-      inputCadence.value =
-      inputDuration.value =
-      inputElevation.value =
-        "";
+  _newWorkout() {
     const { lat, lng } = this.#mapEvent.latlng;
+    let workout;
+    const type = inputType.value;
+    const distance = inputDistance.valueAsNumber;
+    const duration = inputDuration.valueAsNumber;
+
+    if (type === "running") {
+      const cadence = +inputCadence.value;
+      workout = new Running([lat, lng], distance, duration, cadence);
+    } else {
+      const elevation = +inputElevation.value;
+      workout = new Cycling([lat, lng], distance, duration, elevation);
+    }
+    this.#workouts.push(workout);
+    console.log(this.#workouts);
+    // prettier-ignore
+    inputDistance.value = inputCadence.value = inputDuration.value = inputElevation.value = 0;
+
     L.marker([lat, lng])
       .addTo(this.#map)
       .bindPopup(
@@ -101,10 +117,10 @@ class App {
           minWidth: 100,
           autoClose: false,
           closeOnClick: false,
-          className: "running-popup",
+          className: `${type}-popup`,
         })
       )
-      .setPopupContent("Workout")
+      .setPopupContent(`${type} on ${workout.date}`.toUpperCase())
       .openPopup();
   }
 }

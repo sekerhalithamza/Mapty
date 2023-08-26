@@ -24,7 +24,7 @@
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
       crossorigin=""
     ></script>
-    <script defer src="script.js"></script>
+    <script src="script.js" defer></script>
     <title>mapty // Map your workouts</title>
   </head>
   <body>
@@ -42,13 +42,20 @@
           </div>
           <div class="form__row">
             <label class="form__label">Distance</label>
-            <input class="form__input form__input--distance" placeholder="km" />
+            <input
+              class="form__input form__input--distance"
+              placeholder="km"
+              type="number"
+              min="1"
+            />
           </div>
           <div class="form__row">
             <label class="form__label">Duration</label>
             <input
               class="form__input form__input--duration"
               placeholder="min"
+              type="number"
+              min="1"
             />
           </div>
           <div class="form__row">
@@ -56,6 +63,8 @@
             <input
               class="form__input form__input--cadence"
               placeholder="step/min"
+              type="number"
+              min="1"
             />
           </div>
           <div class="form__row form__row--hidden">
@@ -63,9 +72,10 @@
             <input
               class="form__input form__input--elevation"
               placeholder="meters"
+              type="number"
+              min="1"
             />
           </div>
-          <button class="form__btn">OK</button>
         </form>
 
         <!-- <li class="workout workout--running" data-id="1234567890">
