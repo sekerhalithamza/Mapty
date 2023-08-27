@@ -62,6 +62,7 @@ class App {
   #workouts = [];
   constructor() {
     this._getPosition();
+    this._getLocalStorage();
     const inputs = [inputCadence, inputDistance, inputDuration, inputElevation];
     for (const input of inputs) {
       input.addEventListener("keypress", (e) => {
@@ -90,6 +91,9 @@ class App {
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.#map);
     this.#map.on("click", this._showForm.bind(this));
+    for (const workout of this.#workouts) {
+      this._renderWorkout(workout);
+    }
   }
 
   _showForm(mapE) {
@@ -125,6 +129,7 @@ class App {
   }
 
   _renderWorkout(workout) {
+    console.log(workout);
     form.classList.add("hidden");
 
     let html = `<li class="workout workout--${workout.type}" data-id="${
@@ -171,8 +176,7 @@ class App {
 
     form.insertAdjacentHTML("afterend", html);
 
-    const { lat, lng } = this.#mapEvent.latlng;
-    L.marker([lat, lng])
+    L.marker(workout.coords)
       .addTo(this.#map)
       .bindPopup(
         L.popup({
@@ -189,6 +193,8 @@ class App {
       .openPopup();
 
     form.classList.add("hidden");
+
+    this._setLocalStorage();
   }
 
   _moveToPopup(e) {
@@ -201,6 +207,17 @@ class App {
     );
 
     this.#map.setView(workout.coords, 13);
+  }
+
+  _setLocalStorage() {
+    localStorage.setItem("workouts", JSON.stringify(this.#workouts));
+  }
+
+  _getLocalStorage() {
+    let data = localStorage.getItem("workouts");
+    data = JSON.parse(data);
+    if (!data) return;
+    this.#workouts = data;
   }
 }
 
